@@ -1,6 +1,6 @@
 <?php
 function Conectarse(){
-	$Conexion =  mysqli_connect("localhost","root","","cita");
+	$Conexion =  mysqli_connect("localhost","root","","citas");
 	return $Conexion;
 }
 ?>

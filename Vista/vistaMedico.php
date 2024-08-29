@@ -50,7 +50,7 @@
         <hr>
         <h3>Lista de Médicos</h3>
         <form action="../Controlador/controladorMedico.php" method="post">
-            <button class="btn btn-primary mb-3" type="submit" name="Acciones" value="Refrescar tabla">Refrescar tabla</button>
+            <button class="btn btn-primary mb-3" type="submit" name="Acciones" value="Cargar">Refrescar tabla</button>
         </form>
         <div class="table-responsive mt-3">
             <table class="table table-bordered">
