@@ -14,9 +14,11 @@ if ($elegirAcciones == 'CrearConsultorio') {
 } elseif ($elegirAcciones == 'BuscarConsultorio') {
     $resultado = $gestorConsultorio->consultarConsultorio($_POST['ConNumero']);
 
-}else{
-    $resultado = $gestorConsultorio->consultarConsultorios();
 }
+
+    $resultado = $gestorConsultorio->consultarConsultorios();
+
+
 
 include "../Vista/vistaConsultorio.php";
 ?>

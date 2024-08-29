@@ -54,11 +54,13 @@
         </form>
         <div class="table-responsive mt-3">
 
+            <p>Buscar Consultorio</p>
             <form class="d-flex" action="../Controlador/controladorConsultorio.php" method="post">
                 <input class="form-control me-2" type="number" name="ConNumero" placeholder="Número del Consultorio" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit" name="Acciones" value="BuscarConsultorio">Buscar</button>
             </form>
             <hr>
+
             <table class="table table-bordered">
                 <thead>
                     <tr>

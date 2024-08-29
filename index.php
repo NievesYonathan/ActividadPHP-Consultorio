@@ -50,8 +50,11 @@
                             
                             <li class="menu-item">
                                 <a href="Controlador/controladorConsultorio.php" class="btn btn-primary btn-block menu-button">Consultorios</a>
-                            </li><hr>                            
+                            </li><hr>   
 
+                            <li class="menu-item">
+                                <a href="Controlador/controladorCita.php" class="btn btn-primary btn-block menu-button">Citas</a>
+                            </li><hr>                            
                         </ul>
                     </div>
                 </div>                
