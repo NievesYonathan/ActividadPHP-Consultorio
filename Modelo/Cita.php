@@ -86,7 +86,8 @@ class Cita{
         $sql = "SELECT * FROM citas WHERE CitEstado = ?";
         $stmt = $this->conexion->prepare($sql);
         $stmt->bind_param("s", $citEstado);
-        $resultado = $stmt->execute();
+        $stmt->execute();
+        $resultado = get_result();
         $stmt->close();
         $this->conexion->close();
 

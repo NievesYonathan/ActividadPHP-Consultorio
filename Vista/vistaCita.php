@@ -76,6 +76,22 @@
                 </thead>
                 <tbody>
                     <?php
+                    include_once '../Modelo/Paciente.php';
+
+                    $paciente = new Paciente();
+                    $namePaciente = $paciente->consultarPacientes();
+
+                    include_once '../Modelo/Medico.php';
+
+                    $medico = new Medico();
+                    $nameMedico = $medico->consultarMedicos();
+
+                    include_once '../Modelo/Consultorio.php';
+
+                    $consultorio = new Consultorio();
+                    $nameConsultorio = $consultorio->consultarConsultorios();
+                    
+
                     while ($fila = mysqli_fetch_assoc($resultado)) {
 
                         //Solicita todos los datos en caso de cometer error al registrarlo, poder modificarlo.
@@ -85,9 +101,28 @@
                             echo "<td>" . $fila['CitNumero'] . "</td>";
                             echo "<td>" . $fila['CitFecha'] . "</td>";
                             echo "<td>" . $fila['CitHora'] . "</td>";
-                            echo "<td>" . $fila['CitPaciente'] . "</td>";
-                            echo "<td>" . $fila['CitMedico'] . "</td>";
-                            echo "<td>" . $fila['CitConsultorio'] . "</td>";
+
+                            while ($medico = mysqli_fetch_assoc($nameMedico)) {
+                                if ($medico['MedIdentificacion'] == $fila['CitMedico']) {
+                                    echo "<td>" . $medico['MedNombres'] . "</td>";
+                                }
+                            }
+                            // echo "<td>" . $fila['CitPaciente'] . "</td>";
+
+                            while ($medico = mysqli_fetch_assoc($nameMedico)) {
+                                if ($medico['MedIdentificacion'] == $fila['CitMedico']) {
+                                    echo "<td>" . $medico['MedNombres'] . "</td>";
+                                }
+                            }
+                            // echo "<td>" . $fila['CitMedico'] . "</td>";
+
+                            while ($consultorio = mysqli_fetch_assoc($nameConsultorio)) {
+                                if ($consultorio['ConNumero'] == $fila['CitConsultorio']) {
+                                    echo "<td>" . $consultorio['ConNombre'] . "</td>";
+                                }
+                            }
+                            //echo "<td>" . $fila['CitConsultorio'] . "</td>";
+
                             echo "<td>" . $fila['CitEstado'] . "</td>";
                             echo '<td>
                                     <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateModal' . $fila['CitNumero'] . '">Editar</button>

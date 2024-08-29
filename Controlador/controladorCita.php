@@ -36,10 +36,9 @@ if ($elegirAcciones == 'CrearCita') {
 } elseif ($elegirAcciones == 'BuscarCitaC') {
     $resultado = $gestorCita->listaCitasCumplidas();
 
-} else {
+} 
     $resultado = $gestorCita->listaCitasAsignadas();
 
-}
 
 include "../Modelo/Medico.php";
 include "../Modelo/Consultorio.php";
