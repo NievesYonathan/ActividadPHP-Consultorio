@@ -1,5 +1,6 @@
 <?php
-include 'Conexion.php';
+require_once 'Conexion.php';
+
 class Paciente
 {
     private $pacIdentificacion;
@@ -32,7 +33,7 @@ class Paciente
         $this->Conexion->close();
     }
 
-    public function consultarPacientes($pacIdentificacion = null)
+    public function consultarPaciente($pacIdentificacion = null)
     {
         $this->Conexion = Conectarse();
 
@@ -55,15 +56,15 @@ class Paciente
     }
 
 
-    // public function consultarPacientes($pacIdentificacion)
-    // {
-    //     $this->Conexion = Conectarse();
+    public function consultarPacientes()
+    {
+        $this->Conexion = Conectarse();
 
-    //     $sql = "select * from pacientes where PacIdentificacion ='$pacIdentificacion'";
-    //     $resultado = $this->Conexion->query($sql);
-    //     $this->Conexion->close();
-    //     return $resultado;
-    // }
+        $sql = "select * from pacientes";
+        $resultado = $this->Conexion->query($sql);
+        $this->Conexion->close();
+        return $resultado;
+    }
 
     public function actualizarPaciente($pacIdentificacion, $pacNombres, $pacApellidos, $pacFechaNacimiento, $pacSexo, $pacEstado)
     {
