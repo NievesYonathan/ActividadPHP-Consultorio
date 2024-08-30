@@ -36,12 +36,12 @@ class Cita{
         $this->conexion->close();
     }
 
-    public function modificarCita($citNumero = null, $citFecha = null, $citHora = null, $citPaciente = null, $citMedico = null, $citConsultorio = null, $citEstado = null){
+    public function modificarCita($citNumero = null, $citFecha = null, $citHora = null, $citMedico = null, $citConsultorio = null, $citEstado = null){
         $this->conexion = Conectarse();
 
-        $sql = "UPDATE citas SET CitFecha=?, CitHora=?, CitPaciente=?, CitMedico=?, CitConsultorio=?, CitEstado=? WHERE CitNumero=?";
+        $sql = "UPDATE citas SET CitFecha=?, CitHora=?, CitMedico=?, CitConsultorio=?, CitEstado=? WHERE CitNumero=?";
         $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("ssssisi", $citNumero, $citFecha, $citHora, $citPaciente, $citMedico, $citConsultorio, $citEstado);
+        $stmt->bind_param("sssisi", $citFecha, $citHora, $citMedico, $citConsultorio, $citEstado, $citNumero);
         $resultado = $stmt->execute();
         $stmt->close();
         $this->conexion->close();
@@ -87,7 +87,7 @@ class Cita{
         $stmt = $this->conexion->prepare($sql);
         $stmt->bind_param("s", $citEstado);
         $stmt->execute();
-        $resultado = get_result();
+        $resultado = $stmt->get_result();
         $stmt->close();
         $this->conexion->close();
 
@@ -102,7 +102,8 @@ class Cita{
         $sql = "SELECT * FROM citas WHERE CitEstado = ?";
         $stmt = $this->conexion->prepare($sql);
         $stmt->bind_param("s", $citEstado);
-        $resultado = $stmt->execute();
+        $stmt->execute();
+        $resultado = $stmt->get_result();
         $stmt->close();
         $this->conexion->close();
 

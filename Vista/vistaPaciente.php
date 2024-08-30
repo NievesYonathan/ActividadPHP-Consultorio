@@ -97,34 +97,34 @@
                         echo '</div>';
                         echo '<div class="modal-body">';
                         echo '<form action="../Controlador/controladorPaciente.php" method="post">';
-                        echo '<input type="hidden" name="pacIdentificacion" value="' . $fila['PacIdentificacion'] . '">';
+                        echo '<input type="hidden" name="pacIdentificacion" value="' . htmlspecialchars($fila['PacIdentificacion']) . '">';
+                        
                         echo '<div class="mb-3">
                                 <label class="form-label">Nombres</label>
-                                <input class="form-control" name="pacNombres" type="text" value="' . $fila['PacNombres'] . '">
+                                <input class="form-control" name="pacNombres" type="text" value="' . htmlspecialchars($fila['PacNombres']) . '">
                               </div>';
+                        
                         echo '<div class="mb-3">
                                 <label class="form-label">Apellidos</label>
-                                <input class="form-control" name="pacApellidos" type="text" value="' . $fila['PacApellidos'] . '">
+                                <input class="form-control" name="pacApellidos" type="text" value="' . htmlspecialchars($fila['PacApellidos']) . '">
                               </div>';
-
-                              echo '<div class="mb-3">
-                              <label class="form-label">FechaNacimiento</label>
-                              <input class="form-control" name="pacFechaNacimiento" type="text" value="' . $fila['PacFechaNacimiento'] . '">
-                            </div>';
-
-                          
-
-
+                        
                         echo '<div class="mb-3">
-                              <label class="form-label">Estado</label>
-                              <select class="form-select" name="pacEstado">
-                                  <option value="Activo">Activo</option>
-                                  <option value="Inactivo">Inactivo</option>
-                              </select>
-                            </div>';
+                                <label class="form-label">Fecha de Nacimiento</label>
+                                <input class="form-control" name="pacFechaNacimiento" type="date" value="' . htmlspecialchars($fila['PacFechaNacimiento']) . '">
+                              </div>';
+                        
+                        echo '<div class="mb-3">
+                                <label class="form-label">Estado</label>
+                                <select class="form-select" name="pacEstado">
+                                    <option value="Activo" ' . ($fila['PacEstado'] == 'Activo' ? 'selected' : '') . '>Activo</option>
+                                    <option value="Inactivo" ' . ($fila['PacEstado'] == 'Inactivo' ? 'selected' : '') . '>Inactivo</option>
+                                </select>
+                              </div>';
+                        
                         echo '<button class="btn btn-warning" type="submit" name="Acciones" value="Actualizar paciente">Actualizar paciente</button>';
                         echo '</form>';
-                        echo '</div>';
+                                                echo '</div>';
                         echo '</div>';
                         echo '</div>';
                         echo '</div>';
@@ -147,6 +147,18 @@
                 <div class="mb-3">
                     <label for="PacApellidos" class="form-label">Apellidos</label>
                     <input class="form-control" id="PacApellidos" name="PacApellidos" type="text">
+                </div>
+                <div class="mb-3">
+                    <label for="PacFechaNacimiento" class="form-label">Fecha Nacimiento</label>
+                    <input class="form-control" id="PacFechaNacimiento" name="PacFechaNacimiento" type="date">
+                </div>
+                <div class="mb-3">
+                    <label for="PacSexo" class="form-label">Sexo</label>
+                    <!-- <input class="form-control" id="PacApellidos" name="PacApellidos" type="text"> -->
+                    <select class="form-select" name="PacSexo" id="PacSexo">
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                    </select>
                 </div>
                 <button class="btn btn-success" type="submit" name="Acciones" value="Crear Paciente">Crear paciente</button>
             </form>

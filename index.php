@@ -44,8 +44,12 @@
                     <div class="card-body text-center">
                         <h3 class="menu-title mb-4">Menú de Opciones</h3><hr>
                         <ul class="list-unstyled">
-                            <li class="menu-item">
+                        <li class="menu-item">
                                 <a href="Controlador/controladorMedico.php" class="btn btn-primary btn-block menu-button">Médicos</a>
+                            </li><hr>    
+                            
+                            <li class="menu-item">
+                                <a href="Controlador/controladorPaciente.php" class="btn btn-primary btn-block menu-button">Paciente</a>
                             </li><hr>    
                             
                             <li class="menu-item">

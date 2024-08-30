@@ -61,6 +61,10 @@
             </form>
             <hr>
 
+            <form class="d-flex" action="../Controlador/controladorCita.php" method="get">
+                <button class="btn btn-outline-success" type="submit" name="Acciones" value="BuscarCitaC">Citas Cumplidas</button>
+            </form>
+
             <table class="table table-bordered">
                 <thead>
                     <tr>
@@ -70,6 +74,7 @@
                         <th>Paciente</th>
                         <th>Medico</th>
                         <th>Consultorio</th>
+                        <th>Estado</th>
                         <th>Actualizar</th>
                     </tr>
                 </thead>
@@ -91,47 +96,56 @@
                     $nameConsultorio = $consultorio->consultarConsultorios();
                     
 
+                    // Hacer una sola consulta y almacenar en arrays
+                    $pacientes = [];
+                    $medicos = [];
+                    $consultorios = [];
+                    
+                    // Pacientes
+                    while ($paciente = mysqli_fetch_assoc($namePaciente)) {
+                        $pacientes[$paciente['PacIdentificacion']] = $paciente['PacNombres'];
+                    }
+                    
+                    // Médicos
+                    while ($medico = mysqli_fetch_assoc($nameMedico)) {
+                        $medicos[$medico['MedIdentificacion']] = $medico['MedNombres'];
+                    }
+                    
+                    // Consultorios
+                    while ($consultorio = mysqli_fetch_assoc($nameConsultorio)) {
+                        $consultorios[$consultorio['ConNumero']] = $consultorio['ConNombre'];
+                    }
+                    
+                    // Ahora recorrer las citas
                     while ($fila = mysqli_fetch_assoc($resultado)) {
-
-                        //Solicita todos los datos en caso de cometer error al registrarlo, poder modificarlo.
-                        //Permite cambiar el estado en caso de querer  volver activar Medico.
-
                         echo "<tr>";
-                            echo "<td>" . $fila['CitNumero'] . "</td>";
-                            echo "<td>" . $fila['CitFecha'] . "</td>";
-                            echo "<td>" . $fila['CitHora'] . "</td>";
-
-                            while ($paciente = mysqli_fetch_assoc($namePaciente)) {
-                                if ($paciente['PacIdentificacion'] == $fila['CitPaciente']) {
-                                    echo "<td>" . $paciente['PacNombres'] . "</td>";
-                                }
-                            }
-                            // echo "<td>" . $fila['CitPaciente'] . "</td>";
-
-                            while ($medico = mysqli_fetch_assoc($nameMedico)) {
-                                if ($medico['MedIdentificacion'] == $fila['CitMedico']) {
-                                    echo "<td>" . $medico['MedNombres'] . "</td>";
-                                }
-                            }
-                            // echo "<td>" . $fila['CitMedico'] . "</td>";
-
-                            while ($consultorio = mysqli_fetch_assoc($nameConsultorio)) {
-                                if ($consultorio['ConNumero'] == $fila['CitConsultorio']) {
-                                    echo "<td>" . $consultorio['ConNombre'] . "</td>";
-                                }
-                            }
-                            //echo "<td>" . $fila['CitConsultorio'] . "</td>";
-
-                            echo "<td>" . $fila['CitEstado'] . "</td>";
-                            echo '<td>
-                                    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateModal' . $fila['CitNumero'] . '">Editar</button>
-                                </td>';
+                        echo "<td>" . htmlspecialchars($fila['CitNumero']) . "</td>";
+                        echo "<td>" . htmlspecialchars($fila['CitFecha']) . "</td>";
+                        echo "<td>" . htmlspecialchars($fila['CitHora']) . "</td>";
+                    
+                        // Paciente
+                        $pacienteNombre = $pacientes[$fila['CitPaciente']] ?? 'Desconocido';
+                        echo "<td>" . htmlspecialchars($pacienteNombre) . "</td>";
+                    
+                        // Médico
+                        $medicoNombre = $medicos[$fila['CitMedico']] ?? 'Desconocido';
+                        echo "<td>" . htmlspecialchars($medicoNombre) . "</td>";
+                    
+                        // Consultorio
+                        $consultorioNombre = $consultorios[$fila['CitConsultorio']] ?? 'Desconocido';
+                        echo "<td>" . htmlspecialchars($consultorioNombre) . "</td>";
+                    
+                        echo "<td>" . htmlspecialchars($fila['CitEstado']) . "</td>";
+                        echo '<td><button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateModal' . $fila['CitNumero'] . '">Editar</button></td>';
                         echo "</tr>";
+                    }
+                    ?>
+                    
                         
 
                         //Modal para editar
                         echo '<div class="modal fade" id="updateModal' . $fila['CitNumero'] . '" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">';
-                        echo '<div class="modal-dialog">';
+                        echo '<div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">';
                         echo '<div class="modal-content">';
                         echo '    <div class="modal-header">
                                 <h5 class="modal-title" id="updateModalLabel">Actualizar Cita - ID: ' . $fila['CitNumero'] . '</h5>
@@ -148,50 +162,63 @@
                                         <label for="CitHora" class="form-label">Hora</label>
                                         <input class="form-control" id="CitHora" name="CitHora" type="time" value="' . $fila['CitHora'] . '">
                                     </div>';
-                        echo '            <div class="mb-3">
-                                        <label for="CitPaciente" class="form-label">Paciente</label>
-                                        <input class="form-control" id="CitPaciente" name="CitPaciente" type="text" value="' . $fila['CitPaciente'] . '">
-                                    </div>';
+                        
+                        echo '      <div class="mb-3">';
+                        echo '          <label for="CitPaciente" class="form-label">Paciente</label>';
+                        ?>
+                               <input class="form-control" id="CitPaciente" name="CitPaciente" type="text" value="<?php echo $pacienteNombre ?>" disabled>
+                        <?php                                               
+                        echo '      </div>';
+
                         echo '     <div class="mb-3">';
                                         // <!-- <label for="CitMedico" class="form-label">Medico</label>
                                         // <input class="form-control" id="CitMedico" name="CitMedico" type="number"> -->
-                        echo '                <label class="form-label">Médico</label>
-                                        <select class="form-select" name="CitMedico">
-                                            <option value="' . $fila['CitMedico'] . '">' . $fila['CitMedico'] . '</option>';
+                                        // <option value="' . $fila['CitMedico'] . '">' . $fila['CitMedico'] . '</option>
+                        echo '          <label class="form-label">Médico</label>
+                                        <select class="form-select" name="CitMedico">';
                                             $gestorM = new Medico();                  
-                                            $resultado = $gestorM->consultarMedicos();
-                                            while ($fila = mysqli_fetch_assoc($resultado)) {
+                                            $resultadoM = $gestorM->consultarMedicos();
+                                            while ($filaM = mysqli_fetch_assoc($resultadoM)) {
                                             ?>
-                                            <option value="<?php echo $fila['MedIdentificacion']; ?>">
-                                                <?php echo $fila['MedNombres']; ?>
+                                            <option value="<?php echo $filaM['MedIdentificacion']; ?>" <?php ($filaM['MedIdentificacion'] == $fila['CitMedico'] ? 'selected' : '') ?>>
+                                                <?php echo $filaM['MedNombres']; ?>
                                             </option>
                                             <?php 
                                             } 
                                             
-                        echo '                </select>';
-                        echo '            </div>';
+                        echo '          </select>';
+                        echo '      </div>';
                         echo '    <div class="mb-3">';
-                                        // <!-- <label for="CitConsultorio" class="form-label">Consultorio</label>
-                                        // <input class="form-control" id="CitConsultorio" name="CitConsultorio" type="number"> -->
-                        echo '                <label class="form-label">Consultorio</label>
-                                        <select class="form-select" name="CitConsultorio">
-                                            <option  value="' . $fila['CitConsultorio'] . '">' . $fila['CitConsultorio'] . '</option>';
+                        echo '          <label class="form-label">Consultorio</label>
+                                        <select class="form-select" name="CitConsultorio">';
                                             $gestorC = new Consultorio();                  
-                                            $resultado = $gestorC->consultarConsultorios();
-                                            while ($fila = mysqli_fetch_assoc($resultado)) {?>
-                                            <option value="<?php echo $fila['ConNumero']; ?>">
-                                                <?php echo $fila['ConNombre']; ?>
+                                            $resultadoC = $gestorC->consultarConsultorios();
+                                            while ($filaC = mysqli_fetch_assoc($resultadoC)) {?>
+                                            <option value="<?php echo $filaC['ConNumero']; ?>" <?php ($filaC['ConNumero'] == $fila['CitConsultorio'] ? 'selected' : '') ?>>
+                                                <?php echo $filaC['ConNombre']; ?>
                                             </option>
                                             <?php 
                                             }
-                        echo '                </select>';
+                        echo '           </select>';
+                        echo '    </div>';
+                        echo '<div class="mb-3">
+                                    <label class="form-label">Estado</label>
+                                    <select class="form-select" name="CitEstado">
+                                        <option value="Cumplida" ' . ($fila['CitEstado'] == 'Cumplida' ? 'selected' : '') . '>Cumplida</option>                                
+                                        <option value="Asignada" ' . ($fila['CitEstado'] == 'Asignada' ? 'selected' : '') . '>Asignada</option>
+                                        <option value="Solicitada" ' . ($fila['CitEstado'] == 'Solicitada' ? 'selected' : '') . '>Solicitada</option>
+                                        <option value="Cancelada" ' . ($fila['CitEstado'] == 'Cancelada' ? 'selected' : '') . '>Cancelada</option>
+                                    </select>
+                                </div>';
                         echo '           </div>';
-                        echo '    <div class="mb-3">';
-                        echo '                <label for="CitEstado" class="form-label">Estado</label>
-                                        <input class="form-control" id="CitEstado" name="CitEstado" type="hidden" value="' . $fila['CitEstado'] . '">
-                                    </div>';
+                        // echo '    <div class="mb-3">';
+                        // echo '                <label for="CitEstado" class="form-label">Estado</label>
+                        //                 <input class="form-control" id="CitEstado" name="CitEstado" type="hidden" value="' . $fila['CitEstado'] . '">
+                        //             </div>';
 
-                        echo '    <button class="btn btn-warning" type="submit" name="Acciones" value="Actualizar Medico">Actualizar Cita</button>';
+                        echo '  <div class="modal-footer"> 
+                                <button class="btn btn-warning" type="submit" name="Acciones" value="ActualizarCita">Actualizar Cita</button>
+                                </div>';
                         echo '</form>';
                         echo '</div>';
                         echo '</div>';
@@ -224,8 +251,6 @@
                     <input class="form-control" id="CitPaciente" name="CitPaciente" type="text">
                 </div>
                 <div class="mb-3">
-                    <!-- <label for="CitMedico" class="form-label">Medico</label>
-                    <input class="form-control" id="CitMedico" name="CitMedico" type="number"> -->
                     <label class="form-label">Médico</label>
                     <select class="form-select" name="CitMedico">
                         <option value="">Seleccionar</option>
@@ -240,8 +265,6 @@
                     </select>
                 </div>
                 <div class="mb-3">
-                    <!-- <label for="CitConsultorio" class="form-label">Consultorio</label>
-                    <input class="form-control" id="CitConsultorio" name="CitConsultorio" type="number"> -->
                     <label class="form-label">Consultorio</label>
                     <select class="form-select" name="CitConsultorio">
                         <option value="">Seleccionar</option>

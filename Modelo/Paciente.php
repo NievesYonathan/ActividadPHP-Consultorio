@@ -16,18 +16,21 @@ class Paciente
         $this->pacIdentificacion = $pacIdentificacion;
         $this->pacNombre = $pacNombre;
         $this->pacApellido = $pacApellido;
+        $this->pacFechaNacimiento = $pacFechaNacimiento;
         $this->pacSexo = $pacSexo;
         $this->pacEstado = $pacEstado;
         $this->Conexion = Conectarse();
     }
-    public function agregarPaciente($pacIdentificacion = null, $pacNombre = null, $pacApellido = null, $pacSexo = null, $pacEstado = null)
+    public function agregarPaciente($pacIdentificacion = null, $pacNombre = null, $pacApellido = null, $pacFechaNacimiento = null, $pacSexo = null)
     {
         $this->Conexion = Conectarse();
 
-        $sql = "INSERT INTO pacientes (PacNombre, PacApellido, PacSexo, PacEstado)
-                VALUES (?, ?, ?,?)";
+        $pacEstado = "Activo";
+
+        $sql = "INSERT INTO pacientes (PacIdentificacion, PacNombres, PacApellidos, PacFechaNacimiento, PacSexo, PacEstado)
+                VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $this->Conexion->prepare($sql);
-        $stmt->bind_param("ssss", $pacIdentificacion, $pacNombre, $pacApellido, $pacSexo, $pacEstado);
+        $stmt->bind_param("ssssss", $pacIdentificacion, $pacNombre, $pacApellido, $pacFechaNacimiento, $pacSexo, $pacEstado);
         $stmt->execute();
         $stmt->close();
         $this->Conexion->close();
@@ -70,10 +73,10 @@ class Paciente
     {
         $this->Conexion = Conectarse();
 
-        $sql = "UPDATE pacientes SET PacIdentificacion=?, PacNombres=?, PacApellidos=?, PacFechaNacimiento=?,PacEstado=? WHERE PacIdentificacion=?";
+        $sql = "UPDATE pacientes SET PacNombres=?, PacApellidos=?, PacFechaNacimiento=?, PacSexo=?, PacEstado=? WHERE PacIdentificacion=?";
 
         $stmt = $this->Conexion->prepare($sql);
-        $stmt->bind_param("ssss", $pacNombres, $pacApellidos, $pacFechaNacimiento, $pacEstado);
+        $stmt->bind_param("ssssss", $pacNombres, $pacApellidos, $pacFechaNacimiento, $pacSexo, $pacEstado, $pacIdentificacion);
 
         $resultado = $stmt->execute();
 
