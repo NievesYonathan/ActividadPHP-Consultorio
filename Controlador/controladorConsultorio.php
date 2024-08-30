@@ -12,12 +12,19 @@ if ($elegirAcciones == 'CrearConsultorio') {
     );
 
 } elseif ($elegirAcciones == 'BuscarConsultorio') {
-    $resultado = $gestorConsultorio->consultarConsultorio($_POST['ConNumero']);
+    $resultadoC = $gestorConsultorio->consultarConsultorio($_POST['ConNumero']);
 
+} elseif ($elegirAcciones == 'RefrescarTabla') {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $resultadoC = $gestorConsultorio->consultarConsultorios();
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit;
+    }
+
+}else{
+    $resultadoC = $gestorConsultorio->consultarConsultorios();
 }
-
-    $resultado = $gestorConsultorio->consultarConsultorios();
-
 
 
 include "../Vista/vistaConsultorio.php";

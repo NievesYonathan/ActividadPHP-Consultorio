@@ -50,7 +50,7 @@
         <hr>
         <h3>Lista de Consultorios</h3>
         <form action="../Controlador/controladorConsultorio.php" method="post">
-            <button class="btn btn-primary mb-3" type="submit" name="Acciones" value="Refrescar tabla">Refrescar tabla</button>
+            <button class="btn btn-primary mb-3" type="submit" name="Acciones" value="RefrescarTabla">Refrescar tabla</button>
         </form>
         <div class="table-responsive mt-3">
 
@@ -71,7 +71,7 @@
                 </thead>
                 <tbody>
                     <?php
-                    while ($fila = mysqli_fetch_assoc($resultado)) {
+                    while ($fila = mysqli_fetch_assoc($resultadoC)) {
 
                         //Solicita todos los datos en caso de cometer error al registrarlo, poder modificarlo.
                         //Permite cambiar el estado en caso de querer  volver activar Medico.
@@ -112,7 +112,7 @@
         </div>
         <div>
             <h3>Agregar Consultorio</h3>
-            <form action="../Controlador/controladorConsultorio.php" method="get">
+            <form action="../Controlador/controladorConsultorio.php" method="post">
                 <div class="mb-3">
                     <label for="ConNumero" class="form-label">Número Consultorio</label>
                     <input class="form-control" id="ConNumero" name="ConNumero" type="number">

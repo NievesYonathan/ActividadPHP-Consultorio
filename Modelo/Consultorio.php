@@ -27,8 +27,12 @@ class Consultorio {
     public function consultarConsultorio($conNumero = null){
         $this->conexion = Conectarse();
 
-        $sql = "SELECT * FROM consultorios WHERE ConNumero = $conNumero";
-        $res = $this->conexion->query($sql);
+        $sql = "SELECT * FROM consultorios WHERE ConNumero = ?";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("i", $conNumero);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $stmt->close();
         $this->conexion->close();
 
         return $res;

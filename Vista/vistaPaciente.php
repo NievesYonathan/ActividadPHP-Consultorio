@@ -1,3 +1,7 @@
+<?php
+include_once '../Controlador/controladorPaciente.php';
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -45,18 +49,25 @@
     }
 </style>
     <div class="container mt-5">
-        <h1 class="mb-3">Médicos</h1>
+        <h1 class="mb-3">Pacientes</h1>
         <a class="btn btn-secondary" href="../index.php">Volver menú principal</a>
         <hr>
-        <h3>Lista de Médicos</h3>
+        <h3>Lista de Pacientes</h3>
         <form action="../Controlador/controladorPaciente.php" method="post">
             <button class="btn btn-primary mb-3" type="submit" name="Acciones" value="Refrescar tabla">Refrescar tabla</button>
         </form>
         <div class="table-responsive mt-3">
+            <p>Buscar Paciente</p>
+            <form class="d-flex" action="../Controlador/controladorPaciente.php" method="post">
+                <input class="form-control me-2" type="text" name="PacIdentificacion" placeholder="Número Paciente">
+                <button class="btn btn-outline-success" type="submit" name="Acciones" value="BuscarPaciente">Buscar</button>
+            </form>
+            <hr>
+
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Identificación Médico</th>
+                        <th>Identificación Paciente</th>
                         <th>Nombres</th>
                         <th>Apellidos</th>
                         <th>FechaNacimiento</th>
@@ -67,7 +78,7 @@
                 </thead>
                 <tbody>
                     <?php
-                    while ($fila = mysqli_fetch_assoc($resultado)) {
+                    while ($fila = mysqli_fetch_assoc($resultadoP)) {
 
                         //Solicita todos los datos en caso de cometer error al registrarlo, poder modificarlo.
                         //Permite cambiar el estado en caso de querer  volver activar Paciente.

@@ -58,7 +58,12 @@
 
                             <li class="menu-item">
                                 <a href="Controlador/controladorCita.php" class="btn btn-primary btn-block menu-button">Citas</a>
+                            </li><hr>  
+
+                            <li class="menu-item">
+                                <a href="Controlador/controladorTratamiento.php" class="btn btn-primary btn-block menu-button">Tratamiento</a>
                             </li><hr>                            
+                          
                         </ul>
                     </div>
                 </div>                

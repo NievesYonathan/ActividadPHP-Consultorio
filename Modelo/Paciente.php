@@ -36,38 +36,52 @@ class Paciente
         $this->Conexion->close();
     }
 
-    public function consultarPaciente($pacIdentificacion = null)
-    {
-        $this->Conexion = Conectarse();
+public function consultarPaciente($pacIdentificacion = null)
+{
+    $this->Conexion = Conectarse();
 
-        if ($pacIdentificacion) {
-            $sql = "SELECT * FROM pacientes WHERE PacIdentificacion = ?";
-            $stmt = $this->Conexion->prepare($sql);
-            $stmt->bind_param("s", $pacIdentificacion);
-        } else {
-            $sql = "SELECT * FROM pacientes";
-            $stmt = $this->Conexion->prepare($sql);
+    if ($this->Conexion->connect_error) {
+        die("Conexión fallida: " . $this->Conexion->connect_error);
+    }
+
+    if ($pacIdentificacion) {
+        $sql = "SELECT * FROM pacientes WHERE PacIdentificacion = ?";
+        $stmt = $this->Conexion->prepare($sql);
+        if (!$stmt) {
+            die("Error en la preparación de la consulta: " . $this->Conexion->error);
         }
-
-        $stmt->execute();
-        $resultado = $stmt->get_result();
-
-        $stmt->close();
-        $this->Conexion->close();
-
-        return $resultado;
+        $stmt->bind_param("s", $pacIdentificacion);
+    } else {
+        $sql = "SELECT * FROM pacientes";
+        $stmt = $this->Conexion->prepare($sql);
+        if (!$stmt) {
+            die("Error en la preparación de la consulta: " . $this->Conexion->error);
+        }
     }
 
+    $stmt->execute();
+    $resultado = $stmt->get_result();
 
-    public function consultarPacientes()
-    {
-        $this->Conexion = Conectarse();
-
-        $sql = "select * from pacientes";
-        $resultado = $this->Conexion->query($sql);
-        $this->Conexion->close();
-        return $resultado;
+    if (!$resultado) {
+        die("Error en la ejecución de la consulta: " . $stmt->error);
     }
+
+    $stmt->close();
+    $this->Conexion->close();
+
+    return $resultado;
+}
+
+
+    // public function consultarPacientes()
+    // {
+    //     $this->Conexion = Conectarse();
+
+    //     $sql = "select * from pacientes";
+    //     $resultado = $this->Conexion->query($sql);
+    //     $this->Conexion->close();
+    //     return $resultado;
+    // }
 
     public function actualizarPaciente($pacIdentificacion, $pacNombres, $pacApellidos, $pacFechaNacimiento, $pacSexo, $pacEstado)
     {

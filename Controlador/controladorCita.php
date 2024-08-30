@@ -19,7 +19,7 @@ if ($elegirAcciones == 'CrearCita') {
     );
     header('Location: ' . $_SERVER['PHP_SELF']);
     exit;
-}
+    }
 
 } elseif ($elegirAcciones == 'ActualizarCita') {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -34,7 +34,7 @@ if ($elegirAcciones == 'CrearCita') {
     $gestorCita->modificarCita($CitNumero, $CitFecha, $CitHora, $CitMedico, $CitConsultorio, $CitEstado);
     header('Location: ' . $_SERVER['PHP_SELF']);
     exit;
-}
+    }
 
 } elseif ($elegirAcciones == 'CancelarCita') {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -42,7 +42,7 @@ if ($elegirAcciones == 'CrearCita') {
     $gestorCita->cancelarCita($_POST['CitNumero']);
     header('Location: ' . $_SERVER['PHP_SELF']);
     exit;
-}
+    }
 
 } elseif ($elegirAcciones == 'BuscarCitaS') {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -50,17 +50,18 @@ if ($elegirAcciones == 'CrearCita') {
     $resultado = $gestorCita->listaCitasSolicitadas();
     header('Location: ' . $_SERVER['PHP_SELF']);
     exit;
-}
+    }
 
 } elseif ($elegirAcciones == 'BuscarCitaC') {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $resultado = $gestorCita->listaCitasCumplidas();
+        $resultadoCi = $gestorCita->listaCitasCumplidas();
         header('Location: ' . $_SERVER['PHP_SELF']);
         exit;
     }
-} 
+} else {
+    $resultado = $gestorCita->listaCitasAsignadas();
+}
 
-$resultado = $gestorCita->listaCitasAsignadas();
 
 
 include "../Modelo/Medico.php";
