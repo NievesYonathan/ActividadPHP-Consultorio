@@ -36,54 +36,65 @@ class Paciente
         $this->Conexion->close();
     }
 
-public function consultarPaciente($pacIdentificacion = null)
-{
-    $this->Conexion = Conectarse();
+    public function consultarPaciente($pacIdentificacion = null)
+    {
+        $this->Conexion = Conectarse();
 
-    if ($this->Conexion->connect_error) {
-        die("Conexión fallida: " . $this->Conexion->connect_error);
-    }
+        if ($this->Conexion->connect_error) {
+            die("Conexión fallida: " . $this->Conexion->connect_error);
+        }
 
-    if ($pacIdentificacion) {
         $sql = "SELECT * FROM pacientes WHERE PacIdentificacion = ?";
         $stmt = $this->Conexion->prepare($sql);
         if (!$stmt) {
             die("Error en la preparación de la consulta: " . $this->Conexion->error);
         }
         $stmt->bind_param("s", $pacIdentificacion);
-    } else {
-        $sql = "SELECT * FROM pacientes";
-        $stmt = $this->Conexion->prepare($sql);
-        if (!$stmt) {
-            die("Error en la preparación de la consulta: " . $this->Conexion->error);
+
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+
+        if (!$resultado) {
+            die("Error en la ejecución de la consulta: " . $stmt->error);
         }
+
+        $stmt->close();
+        $this->Conexion->close();
+
+        return $resultado;
     }
 
-    $stmt->execute();
-    $resultado = $stmt->get_result();
+    public function consultarPacientes()
+    {
+        $this->Conexion = Conectarse();
 
-    if (!$resultado) {
-        die("Error en la ejecución de la consulta: " . $stmt->error);
+        $pacEstado = "Activo";
+        $sql = "SELECT * from pacientes WHERE pacEstado=?";
+        $stmt = $this->Conexion->prepare($sql);
+        $stmt->bind_param('s', $pacEstado);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+        $stmt->close();
+        $this->Conexion->close();
+        return $resultado;
+    }
+    
+    public function consultarPacientesInactivos()
+    {
+        $this->Conexion = Conectarse();
+
+        $pacEstado = "Inactivo";
+        $sql = "SELECT * from pacientes WHERE pacEstado=?";
+        $stmt = $this->Conexion->prepare($sql);
+        $stmt->bind_param('s', $pacEstado);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+        $stmt->close();
+        $this->Conexion->close();
+        return $resultado;
     }
 
-    $stmt->close();
-    $this->Conexion->close();
-
-    return $resultado;
-}
-
-
-    // public function consultarPacientes()
-    // {
-    //     $this->Conexion = Conectarse();
-
-    //     $sql = "select * from pacientes";
-    //     $resultado = $this->Conexion->query($sql);
-    //     $this->Conexion->close();
-    //     return $resultado;
-    // }
-
-    public function actualizarPaciente($pacIdentificacion, $pacNombres, $pacApellidos, $pacFechaNacimiento, $pacSexo, $pacEstado)
+    public function actualizarPaciente($pacNombres, $pacApellidos, $pacFechaNacimiento, $pacSexo, $pacEstado, $pacIdentificacion)
     {
         $this->Conexion = Conectarse();
 
@@ -99,4 +110,24 @@ public function consultarPaciente($pacIdentificacion = null)
 
         return $resultado;
     }
+
+    public function borrarPaciente($pacIdentificacion)
+    {
+        $this->Conexion = Conectarse();
+
+        $pacEstado = "Inactivo";
+
+        $sql = "UPDATE pacientes SET PacEstado=? WHERE PacIdentificacion=?";
+
+        $stmt = $this->Conexion->prepare($sql);
+        $stmt->bind_param("ss", $pacEstado, $pacIdentificacion);
+
+        $resultado = $stmt->execute();
+
+        $stmt->close();
+        $this->Conexion->close();
+
+        return $resultado;
+    }
+
 }

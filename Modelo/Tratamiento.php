@@ -29,7 +29,7 @@ class Tratamiento
         $sql = "INSERT INTO tratamientos (TraFechaAsignado, TraDescripcion, TraFechaInicio, TraFechaFin, TraObservaciones, TraPaciente)
                 VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $this->Conexion->prepare($sql);
-        $stmt->bind_param("sssssi", $TraFechaAsignado, $TraDescripcion, $TraFechaInicio, $TraFechaFin, $TraObservaciones, $TraPaciente);
+        $stmt->bind_param("ssssss", $TraFechaAsignado, $TraDescripcion, $TraFechaInicio, $TraFechaFin, $TraObservaciones, $TraPaciente);
         $stmt->execute();
         $stmt->close();
         $this->Conexion->close();

@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -5,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Citas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
 <style>
@@ -50,14 +54,14 @@
         <hr>
         <h3>Lista de Citas</h3>
         <form action="../Controlador/controladorCita.php" method="post">
-            <button class="btn btn-primary mb-3" type="submit" name="Acciones" value="Refrescar tabla">Refrescar tabla</button>
+            <button class="btn btn-primary mb-3" type="submit" name="Acciones" value="RefrescarTabla">Refrescar tabla</button>
         </form>
         <div class="table-responsive mt-3">
 
             <p>Buscar Citas</p>
-            <form class="d-flex" action="../Controlador/controladorCita.php" method="get">
-                <!-- <input class="form-control me-2" type="citNumero" name="ConNumero" placeholder="Número del Consultorio" aria-label="Search"> -->
-                <button class="btn btn-outline-success" type="submit" name="Acciones" value="BuscarCitaC">Buscar Citas Cumplidas</button>
+            <form class="d-flex" action="../Controlador/controladorCita.php" method="post">
+                <button class="btn btn-outline-success" style="margin-right: 6px;" type="submit" name="Acciones" value="BuscarCitaC">Citas Cumplidas</button>
+                <button class="btn btn-outline-success" type="submit" name="Acciones" value="BuscarCitaCa">Citas Cancelada</button>
             </form>
             <hr>
 
@@ -79,7 +83,7 @@
                     include_once '../Modelo/Paciente.php';
 
                     $paciente = new Paciente();
-                    $namePaciente = $paciente->consultarPaciente();
+                    $namePacienteR = $paciente->consultarPacientes();
 
                     include_once '../Modelo/Medico.php';
 
@@ -91,41 +95,39 @@
                     $consultorio = new Consultorio();
                     $nameConsultorio = $consultorio->consultarConsultorios();
                     
+                        foreach ($_SESSION['resultadoCi'] as $fila) {
+                            // Reiniciar el puntero del resultado en cada iteración
+                            mysqli_data_seek($namePacienteR, 0);
+                            mysqli_data_seek($nameMedico, 0);
+                            mysqli_data_seek($nameConsultorio, 0);
 
-                    while ($fila = mysqli_fetch_assoc($resultadoCi)) {
-
-                        //Solicita todos los datos en caso de cometer error al registrarlo, poder modificarlo.
-                        //Permite cambiar el estado en caso de querer  volver activar Medico.
 
                         echo "<tr>";
                             echo "<td>" . $fila['CitNumero'] . "</td>";
                             echo "<td>" . $fila['CitFecha'] . "</td>";
                             echo "<td>" . $fila['CitHora'] . "</td>";
 
-                            while ($paciente = mysqli_fetch_assoc($namePaciente)) {
+                            while ($paciente = mysqli_fetch_assoc($namePacienteR)) {
                                 if ($paciente['PacIdentificacion'] == $fila['CitPaciente']) {
-                                    echo "<td>" . $paciente['PacNombres'] . "</td>";
+                                    echo "<td>" . $paciente['PacNombres'] . ' ' .  $paciente['PacApellidos'] ."</td>";
                                 }
                             }
-                            // echo "<td>" . $fila['CitPaciente'] . "</td>";
-
+                            
                             while ($medico = mysqli_fetch_assoc($nameMedico)) {
                                 if ($medico['MedIdentificacion'] == $fila['CitMedico']) {
-                                    echo "<td>" . $medico['MedNombres'] . "</td>";
+                                    echo "<td>" . $medico['MedNombres'] . ' ' .  $medico['MedApellidos'] . "</td>";
                                 }
                             }
-                            // echo "<td>" . $fila['CitMedico'] . "</td>";
 
                             while ($consultorio = mysqli_fetch_assoc($nameConsultorio)) {
                                 if ($consultorio['ConNumero'] == $fila['CitConsultorio']) {
                                     echo "<td>" . $consultorio['ConNombre'] . "</td>";
                                 }
                             }
-                            //echo "<td>" . $fila['CitConsultorio'] . "</td>";
 
                             echo "<td>" . $fila['CitEstado'] . "</td>";
                             echo '<td>
-                                    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateModal' . $fila['CitNumero'] . '">Editar</button>
+                                    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateModal' . $fila['CitNumero'] . '"><i class="fa-solid fa-pen-to-square"></i></button>
                                 </td>';
                         echo "</tr>";
                         
@@ -149,13 +151,24 @@
                                         <label for="CitHora" class="form-label">Hora</label>
                                         <input class="form-control" id="CitHora" name="CitHora" type="time" value="' . $fila['CitHora'] . '">
                                     </div>';
-                        echo '            <div class="mb-3">
-                                        <label for="CitPaciente" class="form-label">Paciente</label>
-                                        <input class="form-control" id="CitPaciente" name="CitPaciente" type="text" value="' . $fila['CitPaciente'] . '">
-                                    </div>';
+
+                                    
+                        echo '      <div class="mb-3">
+                                        <label for="CitPaciente" class="form-label">Paciente</label>';
+                                        $gestorP = new Paciente();
+                                        $resultadoP = $gestorP->consultarPaciente();
+                                        $nombrePaciente = '';
+                                        while ($filaP = mysqli_fetch_assoc($resultadoP)) {
+                                            if ($filaP['PacIdentificacion'] == $fila['CitPaciente']) {
+                                                $nombrePaciente = $filaP['PacNombres'] . ' ' . $filaP['PacApellidos'];
+                                                break; // Una vez encontrado el paciente, salir del bucle
+                                            }
+                                        }
+                                        ?>
+                                        <input class="form-control" id="CitPaciente" name="CitPaciente" type="text" value="<?php echo $nombrePaciente; ?>" disabled>
+                                        <?php
+                        echo '      </div>';
                         echo '     <div class="mb-3">';
-                                        // <!-- <label for="CitMedico" class="form-label">Medico</label>
-                                        // <input class="form-control" id="CitMedico" name="CitMedico" type="number"> -->
                         echo '          <label class="form-label">Médico</label>
                                         <select class="form-select" name="CitMedico">';
                                             $gestorM = new Medico();                  
@@ -193,10 +206,6 @@
                                     </select>
                                 </div>';
                         echo '           </div>';
-                        // echo '    <div class="mb-3">';
-                        // echo '                <label for="CitEstado" class="form-label">Estado</label>
-                        //                 <input class="form-control" id="CitEstado" name="CitEstado" type="hidden" value="' . $fila['CitEstado'] . '">
-                        //             </div>';
 
                         echo '  <div class="modal-footer"> 
                                 <button class="btn btn-warning" type="submit" name="Acciones" value="ActualizarCita">Actualizar Cita</button>
@@ -217,10 +226,6 @@
             <h3>Agregar Cita</h3>
             <form action="../Controlador/controladorCita.php" method="post">
                 <div class="mb-3">
-                    <label for="CitNumero" class="form-label">Número Cita</label>
-                    <input class="form-control" id="CitNumero" name="CitNumero" type="number">
-                </div>
-                <div class="mb-3">
                     <label for="CitFecha" class="form-label">Fecha</label>
                     <input class="form-control" id="CitFecha" name="CitFecha" type="date">
                 </div>
@@ -230,11 +235,19 @@
                 </div>
                 <div class="mb-3">
                     <label for="CitPaciente" class="form-label">Paciente</label>
-                    <input class="form-control" id="CitPaciente" name="CitPaciente" type="text">
+                    <select class="form-select" name="CitPaciente">
+                        <option value="">Seleccionar</option>
+                        <?php
+                        $gestorP = new Paciente();                  
+                        $resultado = $gestorP->consultarPacientes();
+                        while ($fila = mysqli_fetch_assoc($resultado)) {?>
+                        <option value="<?php echo $fila['PacIdentificacion']; ?>">
+                            <?php echo $fila['PacNombres']; ?>
+                        </option>
+                        <?php } ?>
+                    </select>
                 </div>
                 <div class="mb-3">
-                    <!-- <label for="CitMedico" class="form-label">Medico</label>
-                    <input class="form-control" id="CitMedico" name="CitMedico" type="number"> -->
                     <label class="form-label">Médico</label>
                     <select class="form-select" name="CitMedico">
                         <option value="">Seleccionar</option>
@@ -249,8 +262,6 @@
                     </select>
                 </div>
                 <div class="mb-3">
-                    <!-- <label for="CitConsultorio" class="form-label">Consultorio</label>
-                    <input class="form-control" id="CitConsultorio" name="CitConsultorio" type="number"> -->
                     <label class="form-label">Consultorio</label>
                     <select class="form-select" name="CitConsultorio">
                         <option value="">Seleccionar</option>
@@ -265,7 +276,6 @@
                     </select>
                 </div>
                 <div class="mb-3">
-                    <!-- <label for="CitEstado" class="form-label">Estado</label> -->
                     <input class="form-control" id="CitEstado" name="CitEstado" type="hidden" value="Asignada">
                 </div>
 

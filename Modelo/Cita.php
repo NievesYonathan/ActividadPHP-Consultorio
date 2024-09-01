@@ -23,14 +23,14 @@ class Cita{
         $this->citEstado = $citEstado;
     }
 
-    public function agregarCita($citNumero = null, $citFecha = null, $citHora = null, $citPaciente = null, $citMedico = null, $citConsultorio = null, $citEstado = null){
+    public function agregarCita( $citFecha = null, $citHora = null, $citPaciente = null, $citMedico = null, $citConsultorio = null, $citEstado = null){
         $this->conexion = Conectarse();
 
-        $sql = "INSERT INTO citas(CitNumero, CitFecha, CitHora, CitPaciente, CitMedico, CitConsultorio, CitEstado)
-                VALUES (?,?,?,?,?,?,?)";
+        $sql = "INSERT INTO citas(CitFecha, CitHora, CitPaciente, CitMedico, CitConsultorio, CitEstado)
+                VALUES (?,?,?,?,?,?)";
         
         $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("issssis", $citNumero, $citFecha, $citHora, $citPaciente, $citMedico, $citConsultorio, $citEstado);
+        $stmt->bind_param("ssssis", $citFecha, $citHora, $citPaciente, $citMedico, $citConsultorio, $citEstado);
         $stmt->execute();
         $stmt->close();
         $this->conexion->close();
@@ -78,10 +78,10 @@ class Cita{
         return $resultado;
     }
 
-    public function listaCitasSolicitadas(){
+    public function listaCitasCanceladas(){
         $this->conexion = Conectarse();
 
-        $citEstado = "Solicitada";
+        $citEstado = "Cancelada";
 
         $sql = "SELECT * FROM citas WHERE CitEstado = ?";
         $stmt = $this->conexion->prepare($sql);

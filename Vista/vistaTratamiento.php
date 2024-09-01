@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -49,6 +48,13 @@
             <button class="btn btn-primary mb-3" type="submit" name="Acciones" value="Refrescar tabla">Refrescar tabla</button>
         </form>
         <div class="table-responsive mt-3">
+            <p>Buscar Tratamiento</p>
+            <form class="d-flex" action="../Controlador/controladorTratamiento.php" method="post">
+                <input class="form-control me-2" type="number" name="TraNumero" placeholder="Número del Tratamiento" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit" name="Acciones" value="BuscarTratamiento">Buscar</button>
+            </form>
+            <hr>
+
             <table class="table table-bordered">
                 <thead>
                     <tr>
@@ -64,7 +70,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (isset($resultado) && $resultado->num_rows > 0) {
+                    <?php 
+                    if (isset($resultado) && $resultado->num_rows > 0) {
+                        include_once '../Modelo/Paciente.php';
+
+                        $paciente = new Paciente();
+                        $namePacienteR = $paciente->consultarPacientes();
+    
                         while ($fila = mysqli_fetch_assoc($resultado)) {
                             echo "<tr>";
                             echo "<td>" . htmlspecialchars($fila['TraNumero']) . "</td>";
@@ -73,14 +85,21 @@
                             echo "<td>" . htmlspecialchars($fila['TraFechaInicio']) . "</td>";
                             echo "<td>" . htmlspecialchars($fila['TraFechaFin']) . "</td>";
                             echo "<td>" . htmlspecialchars($fila['TraObservaciones']) . "</td>";
-                            echo "<td>" . htmlspecialchars($fila['TraPaciente']) . "</td>";
+ 
+                            mysqli_data_seek($namePacienteR, 0); 
+                            while ($paciente = mysqli_fetch_assoc($namePacienteR)) {
+                                if ($paciente['PacIdentificacion'] == $fila['TraPaciente']) {
+                                    echo "<td>" . $paciente['PacNombres'] . ' ' .  $paciente['PacApellidos'] ."</td>";
+                                }
+                            }
+                            
                             echo '<td>
                                     <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateModal' . htmlspecialchars($fila['TraNumero']) . '">Editar</button>
                                   </td>';
                             echo '<td>
                                     <form action="../Controlador/controladorTratamiento.php" method="post">
                                         <input type="hidden" name="TraNumero" value="' . htmlspecialchars($fila['TraNumero']) . '">
-                                        <button class="btn btn-danger" type="submit" name="Acciones" value="Borrar Tratamiento">Eliminar</button>
+                                        <button class="btn btn-danger" type="submit" name="Acciones" value="BorrarTratamiento">Eliminar</button>
                                     </form>
                                   </td>';
                             echo "</tr>";
@@ -120,7 +139,7 @@
                                     <label class="form-label">Paciente</label>
                                     <input class="form-control" name="TraPaciente" type="text" value="' . htmlspecialchars($fila['TraPaciente']) . '">
                                   </div>';
-                            echo '<button class="btn btn-warning" type="submit" name="Acciones" value="Actualizar Tratamiento">Actualizar Tratamiento</button>';
+                            echo '<button class="btn btn-warning" type="submit" name="Acciones" value="ActualizarTratamiento">Actualizar Tratamiento</button>';
                             echo '</form>';
                             echo '</div>';
                             echo '</div>';
@@ -172,7 +191,6 @@
                                     <option value="">Seleccionar Paciente</option>
                                     <?php
                                     // Resetear el puntero de resultados para el dropdown de pacientes
-                                    mysqli_data_seek($pacientes, 0); 
                                     while ($paciente = mysqli_fetch_assoc($pacientes)) { ?>
                                         <option value="<?php echo htmlspecialchars($paciente['PacIdentificacion']); ?>">
                                             <?php echo htmlspecialchars($paciente['PacNombreCompleto']); ?>
@@ -180,7 +198,7 @@
                                     <?php } ?>
                                 </select>
                             </div>
-                            <button class="btn btn-success" type="submit" name="Acciones" value="Crear Tratamiento">Crear Tratamiento</button>
+                            <button class="btn btn-success" type="submit" name="Acciones" value="CrearTratamiento">Crear Tratamiento</button>
                         </form>
                     </div>
                 </div>

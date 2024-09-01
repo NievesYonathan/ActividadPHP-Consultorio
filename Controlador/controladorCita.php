@@ -1,15 +1,15 @@
 <?php
+session_start();
 require_once '../Modelo/Cita.php';
 
 $gestorCita = new Cita();
 
-$elegirAcciones = isset($_POST['Acciones']) ? $_POST['Acciones'] : "Cargar";
+$elegirAcciones = isset($_POST['Acciones']) ? $_POST['Acciones'] : "Iniciar";
 
 if ($elegirAcciones == 'CrearCita') {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $gestorCita->agregarCita(
-        $_POST['CitNumero'],
         $_POST['CitFecha'],
         $_POST['CitHora'],
         $_POST['CitPaciente'],
@@ -44,27 +44,45 @@ if ($elegirAcciones == 'CrearCita') {
     exit;
     }
 
-} elseif ($elegirAcciones == 'BuscarCitaS') {
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+} elseif ($elegirAcciones == 'BuscarCitaCa') {
+    $resultadoCi = $gestorCita->listaCitasCanceladas();
 
-    $resultado = $gestorCita->listaCitasSolicitadas();
-    header('Location: ' . $_SERVER['PHP_SELF']);
+    $_SESSION['resultadoCi'] = [];
+    while ($fila = mysqli_fetch_assoc($resultadoCi)){
+        $_SESSION['resultadoCi'][] = $fila;
+    }
+    header('Location: ../Vista/vistaCita.php');
     exit;
-    }
-
+    
 } elseif ($elegirAcciones == 'BuscarCitaC') {
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $resultadoCi = $gestorCita->listaCitasCumplidas();
-        header('Location: ' . $_SERVER['PHP_SELF']);
-        exit;
+    $resultadoCi = $gestorCita->listaCitasCumplidas();
+
+    $_SESSION['resultadoCi'] = [];
+    while ($fila = mysqli_fetch_assoc($resultadoCi)){
+        $_SESSION['resultadoCi'][] = $fila;
     }
-} else {
-    $resultado = $gestorCita->listaCitasAsignadas();
+    header('Location: ../Vista/vistaCita.php');
+    exit;
+
+} elseif ($elegirAcciones == 'RefrescarTabla') {
+    $resultadoCi = $gestorCita->listaCitasAsignadas();
+    $_SESSION['resultadoCi'] = [];
+    while ($fila = mysqli_fetch_assoc($resultadoCi)){
+        $_SESSION['resultadoCi'][] = $fila;
+    }
+    header('Location: ../Vista/vistaCita.php');
+    exit;
+
+} elseif ($elegirAcciones == 'Iniciar') {
+    $resultadoCi = $gestorCita->listaCitasAsignadas();
+    $_SESSION['resultadoCi'] = [];
+    while ($fila = mysqli_fetch_assoc($resultadoCi)){
+        $_SESSION['resultadoCi'][] = $fila;
+    }
+    header('Location: ../Vista/vistaCita.php');
+    exit;
+
 }
 
 
-
-include "../Modelo/Medico.php";
-include "../Modelo/Consultorio.php";
-include "../Vista/vistaCita.php";
 ?>

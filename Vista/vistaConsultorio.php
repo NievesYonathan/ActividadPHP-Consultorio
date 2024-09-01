@@ -114,10 +114,6 @@
             <h3>Agregar Consultorio</h3>
             <form action="../Controlador/controladorConsultorio.php" method="post">
                 <div class="mb-3">
-                    <label for="ConNumero" class="form-label">Número Consultorio</label>
-                    <input class="form-control" id="ConNumero" name="ConNumero" type="number">
-                </div>
-                <div class="mb-3">
                     <label for="ConNombre" class="form-label">Nombre</label>
                     <input class="form-control" id="ConNombre" name="ConNombre" type="text">
                 </div>

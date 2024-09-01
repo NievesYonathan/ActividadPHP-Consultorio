@@ -12,13 +12,13 @@ class Consultorio {
         $this->conNombre = $conNombre;
     }
 
-    public function agregarConsultorio($conNumero = null, $conNombre = null){
+    public function agregarConsultorio($conNombre = null){
         $this->conexion = Conectarse();
 
-        $sql = 'INSERT INTO consultorios(ConNumero, ConNombre)
-                VALUES (?,?)';
+        $sql = 'INSERT INTO consultorios(ConNombre)
+                VALUES (?)';
         $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("is", $conNumero, $conNombre);
+        $stmt->bind_param("s", $conNombre);
         $stmt->execute();
         $stmt->close();
         $this->conexion->close();
